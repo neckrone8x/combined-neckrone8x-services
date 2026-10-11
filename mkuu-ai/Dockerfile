@@ -18,7 +18,7 @@ RUN pip install -r requirements.txt
 WORKDIR /app/Neckrone8x-Stories-Backend
 RUN pip install -r requirements.txt
 
-# Install dependencies for Mkuu AI using the new requirements.txt
+# Install dependencies for Mkuu AI using requirements.txt
 WORKDIR /app/mkuu-ai
 RUN pip install -r requirements.txt
 
