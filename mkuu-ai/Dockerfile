@@ -1,25 +1,34 @@
-FROM python:3.12-slim
+# Use a base image that has both Python and Node.js installed
+FROM nikolaik/python-nodejs:python3.11-nodejs20
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
- && rm -rf /var/lib/apt/lists/*
-
+# Set the working directory inside the container
 WORKDIR /app
 
-RUN pip install --no-cache-dir --upgrade pip
+# Install Nginx (the traffic cop)
+RUN apt-get update && apt-get install -y nginx
 
-RUN pip install --no-cache-dir \
-      fastapi "uvicorn[standard]" \
-      pydantic pydantic-settings \
-      httpx arxiv qdrant-client \
-      rank-bm25 sqlalchemy psycopg2-binary tqdm
+# Copy all your project files into the container
+COPY . .
 
-COPY app ./app
-COPY static ./static
+# Install dependencies for Weather API
+WORKDIR /app/weather-api
+RUN pip install -r requirements.txt
 
-ENV NECKRONE_LOAD_LOCAL_MODELS=false
-ENV PORT=8001
+# Install dependencies for Stories Backend
+WORKDIR /app/Neckrone8x-Stories-Backend
+RUN pip install -r requirements.txt
 
-EXPOSE 8001
+# Install dependencies for Mkuu AI using the new requirements.txt
+WORKDIR /app/mkuu-ai
+RUN pip install -r requirements.txt
 
-CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8001}"]
+# Copy the Nginx and startup configurations
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY start_services.sh /app/start_services.sh
+RUN chmod +x /app/start_services.sh
+
+# Expose the port Render expects
+EXPOSE 10000
+
+# Run the startup script
+CMD ["/app/start_services.sh"]
