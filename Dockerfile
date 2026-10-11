@@ -18,10 +18,11 @@ RUN pip install -r requirements.txt
 WORKDIR /app/Neckrone8x-Stories-Backend
 RUN pip install -r requirements.txt
 
-# Install dependencies for Mkuu AI (checking for both Python and Node files)
+# Install dependencies for Mkuu AI
 WORKDIR /app/mkuu-ai
-RUN if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-RUN if [ -f package.json ]; then npm install; fi
+RUN pip install --upgrade pip
+RUN pip install .
+RUN pip install fastapi uvicorn
 
 # Copy the Nginx and startup configurations we will create next
 COPY nginx.conf /etc/nginx/nginx.conf
