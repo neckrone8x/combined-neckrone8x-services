@@ -12,7 +12,7 @@ python app.py &
 
 # Start the Mkuu AI app in the background
 cd /app/mkuu-ai
-python app/main.py &
+uvicorn app.main:app --host 0.0.0.0 --port 3001 &
 
 # Start the Stories Backend in the background
 cd /app/Neckrone8x-Stories-Backend
