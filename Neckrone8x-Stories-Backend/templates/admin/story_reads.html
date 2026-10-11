@@ -1,0 +1,153 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+
+    <title>{{ story.title }} Read History | Neckrone8x</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/admin.css') }}"
+    >
+</head>
+
+<body>
+
+    <div class="admin-shell">
+
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                NECKRONE8X
+                <span>STORIES</span>
+            </div>
+            <div class="sidebar-title">Administration</div>
+            <nav class="sidebar-menu">
+                <a href="{{ url_for('dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('stories') }}">Stories</a>
+                <a href="{{ url_for('manage_stories') }}" class="active">Manage Stories</a>
+                <a href="{{ url_for('create_story') }}">Create Story</a>
+                <a href="{{ url_for('manage_submissions') }}">Submissions</a>
+                <a href="{{ url_for('admin_analytics') }}">Analytics</a>
+            </nav>
+            <a href="{{ url_for('logout') }}" class="sidebar-logout">Logout</a>
+        </aside>
+
+        <main class="main">
+
+            <div class="topbar">
+                <div>
+                    <h1>{{ story.title }}</h1>
+                    <p>Complete read history</p>
+                </div>
+                <a href="{{ url_for('story_analytics', story_id=story.id) }}" class="create-button">
+                    Analytics →
+                </a>
+            </div>
+
+
+            <section class="stats">
+
+                <div class="stat">
+                    <div class="stat-label">Total Reads</div>
+                    <div class="stat-value">{{ total_reads }}</div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-label">Unique Readers</div>
+                    <div class="stat-value">{{ unique_readers }}</div>
+                </div>
+
+            </section>
+
+
+            <section class="section">
+
+                <div class="section-header">
+                    <div>
+                        <h2>Read History</h2>
+                        <p>
+                            {{ total_reads }} total reads ·
+                            {{ unique_readers }} unique reader{% if unique_readers != 1 %}s{% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                {% if reads %}
+
+                    <div class="reads-list">
+
+                        {% for read in reads %}
+
+                            {% if loop.first or read.date_group != reads[loop.index0 - 1].date_group %}
+                                <div class="read-group-title">
+                                    {{ read.date_group }}
+                                </div>
+                            {% endif %}
+
+                            <div class="read-row">
+
+                                <div class="read-row-icon">👁</div>
+
+                                <div class="read-row-info">
+                                    <div class="read-row-date">
+                                        {{ read.read_at.strftime('%B %d, %Y') }}
+                                    </div>
+                                    <div class="read-row-time">
+                                        {{ read.read_at.strftime('%I:%M %p') }}
+                                    </div>
+                                </div>
+
+                                <div class="read-row-ip">
+                                    {% if read.ip_address %}{{ read.ip_address }}{% else %}Unknown{% endif %}
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                    {% if pagination.pages > 1 %}
+                        <div class="pagination">
+
+                            {% if pagination.has_prev %}
+                                <a href="{{ url_for('story_reads', story_id=story.id, page=pagination.prev_num) }}">
+                                    ← Previous
+                                </a>
+                            {% else %}
+                                <span class="disabled">← Previous</span>
+                            {% endif %}
+
+                            <span class="pagination-info">
+                                Page {{ pagination.page }} of {{ pagination.pages }}
+                            </span>
+
+                            {% if pagination.has_next %}
+                                <a href="{{ url_for('story_reads', story_id=story.id, page=pagination.next_num) }}">
+                                    Next →
+                                </a>
+                            {% else %}
+                                <span class="disabled">Next →</span>
+                            {% endif %}
+
+                        </div>
+                    {% endif %}
+
+                {% else %}
+
+                    <div class="empty-state">No reads recorded yet.</div>
+
+                {% endif %}
+
+            </section>
+
+        </main>
+
+    </div>
+
+</body>
+
+</html>

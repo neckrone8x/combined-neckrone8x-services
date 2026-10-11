@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Edit Story — Neckrone8x
+    </title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            margin: 0;
+
+            font-family: Arial, sans-serif;
+
+            background: #080c14;
+
+            color: white;
+
+        }
+
+
+        .container {
+
+            max-width: 900px;
+
+            margin: auto;
+
+            padding: 40px 20px;
+
+        }
+
+
+        .back {
+
+            color: #00d9ff;
+
+            text-decoration: none;
+
+            display: inline-block;
+
+            margin-bottom: 30px;
+
+        }
+
+
+        .back:hover {
+
+            text-decoration: underline;
+
+        }
+
+
+        h1 {
+
+            margin-bottom: 8px;
+
+        }
+
+
+        .subtitle {
+
+            color: #667085;
+
+            margin-bottom: 35px;
+
+        }
+
+
+        .form-box {
+
+            background: #0d1320;
+
+            border: 1px solid #202938;
+
+            border-radius: 12px;
+
+            padding: 30px;
+
+        }
+
+
+        .field {
+
+            margin-bottom: 22px;
+
+        }
+
+
+        label {
+
+            display: block;
+
+            margin-bottom: 8px;
+
+            font-weight: bold;
+
+        }
+
+
+        input,
+        select,
+        textarea {
+
+            width: 100%;
+
+            padding: 13px;
+
+            background: #080c14;
+
+            border: 1px solid #30394a;
+
+            border-radius: 8px;
+
+            color: white;
+
+            font-family: inherit;
+
+            font-size: 15px;
+
+            outline: none;
+
+        }
+
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+
+            border-color: #00d9ff;
+
+        }
+
+
+        select {
+
+            cursor: pointer;
+
+        }
+
+
+        textarea {
+
+            min-height: 350px;
+
+            resize: vertical;
+
+            line-height: 1.6;
+
+        }
+
+
+        .error {
+
+            background: #351b20;
+
+            color: #ff8080;
+
+            border: 1px solid #633039;
+
+            padding: 12px;
+
+            border-radius: 8px;
+
+            margin-bottom: 20px;
+
+        }
+
+
+        button {
+
+            padding: 14px 25px;
+
+            background: #00d9ff;
+
+            color: #061018;
+
+            border: none;
+
+            border-radius: 8px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            font-size: 14px;
+
+        }
+
+
+        button:hover {
+
+            opacity: 0.85;
+
+        }
+
+
+        @media (max-width: 600px) {
+
+            .container {
+
+                padding: 25px 15px;
+
+            }
+
+
+            .form-box {
+
+                padding: 20px;
+
+            }
+
+
+            textarea {
+
+                min-height: 280px;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <div class="container">
+
+
+        <!-- BACK LINK -->
+
+        <a
+            href="{{ url_for('manage_stories') }}"
+            class="back"
+        >
+
+            &#8592; Back to Stories
+
+        </a>
+
+
+        <!-- PAGE TITLE -->
+
+        <h1>
+
+            Edit Story
+
+        </h1>
+
+
+        <p class="subtitle">
+
+            Update this Neckrone8x Story.
+
+        </p>
+
+
+        <!-- ERROR MESSAGE -->
+
+        {% if error %}
+
+            <div class="error">
+
+                {{ error }}
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- FORM -->
+
+        <div class="form-box">
+
+
+            <form
+                method="POST"
+                action="{{ url_for('edit_story', story_id=story.id) }}"
+            >
+
+
+                <!-- TITLE -->
+
+                <div class="field">
+
+                    <label for="title">
+
+                        Story Title
+
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        value="{{ story.title }}"
+                        maxlength="200"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- CATEGORY -->
+
+                <div class="field">
+
+                    <label for="category">
+
+                        Category
+
+                    </label>
+
+
+                    <select
+    id="category"
+    name="category"
+    required
+>
+
+    <option
+        value="General"
+        {% if story.category == "General" %}
+            selected
+        {% endif %}
+    >
+        General
+    </option>
+
+    <option
+        value="Confession"
+        {% if story.category == "Confession" %}
+            selected
+        {% endif %}
+    >
+        Confession
+    </option>
+
+    <option
+        value="Experience"
+        {% if story.category == "Experience" %}
+            selected
+        {% endif %}
+    >
+        Experience
+    </option>
+
+    <option
+        value="News"
+        {% if story.category == "News" %}
+            selected
+        {% endif %}
+    >
+        News
+    </option>
+
+    <option
+        value="Relationship"
+        {% if story.category == "Relationship" %}
+            selected
+        {% endif %}
+    >
+        Relationship
+    </option>
+
+    <option
+        value="Marriage"
+        {% if story.category == "Marriage" %}
+            selected
+        {% endif %}
+    >
+        Marriage
+    </option>
+
+    <option
+        value="Life"
+        {% if story.category == "Life" %}
+            selected
+        {% endif %}
+    >
+        Life
+    </option>
+
+    <option
+        value="Novels"
+        {% if story.category == "Novels" %}
+            selected
+        {% endif %}
+    >
+        Novels
+    </option>
+
+    <option
+        value="18+"
+        {% if story.category == "18+" %}
+            selected
+        {% endif %}
+    >
+        18+
+    </option>
+
+    <option
+        value="Other"
+        {% if story.category == "Other" %}
+            selected
+        {% endif %}
+    >
+        Other
+    </option>
+
+</select>
+
+                </div>
+
+
+                <!-- AUTHOR -->
+
+                <div class="field">
+
+                    <label for="author">
+
+                        Author
+
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="author"
+                        name="author"
+                        value="{{ story.author }}"
+                        maxlength="100"
+                    >
+
+                </div>
+
+
+                <!-- CONTENT -->
+
+                <div class="field">
+
+                    <label for="content">
+
+                        Story Content
+
+                    </label>
+
+
+                    <textarea
+                        id="content"
+                        name="content"
+                        required
+                    >{{ story.content }}</textarea>
+
+                </div>
+
+
+                <!-- SAVE -->
+
+                <button type="submit">
+
+                    Save Changes
+
+                </button>
+
+
+            </form>
+
+
+        </div>
+
+
+    </div>
+
+
+</body>
+
+</html>

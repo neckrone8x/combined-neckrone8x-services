@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+
+    <title>Create Story | Neckrone8x</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/admin.css') }}"
+    >
+</head>
+
+<body>
+
+    <div class="admin-shell">
+
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                NECKRONE8X
+                <span>STORIES</span>
+            </div>
+            <div class="sidebar-title">Administration</div>
+            <nav class="sidebar-menu">
+                <a href="{{ url_for('dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('stories') }}">Stories</a>
+                <a href="{{ url_for('manage_stories') }}">Manage Stories</a>
+                <a href="{{ url_for('create_story') }}" class="active">Create Story</a>
+                <a href="{{ url_for('manage_submissions') }}">Submissions</a>
+                <a href="{{ url_for('admin_analytics') }}">Analytics</a>
+            </nav>
+            <a href="{{ url_for('logout') }}" class="sidebar-logout">Logout</a>
+        </aside>
+
+        <main class="main">
+
+            <div class="topbar">
+                <div>
+                    <h1>Create Story</h1>
+                    <p>Write and publish a new Neckrone8x Story.</p>
+                </div>
+                <a href="{{ url_for('dashboard') }}" class="create-button">
+                    ← Back to Dashboard
+                </a>
+            </div>
+
+            {% if error %}
+                <div class="login-error">{{ error }}</div>
+            {% endif %}
+
+            <section class="section">
+
+                <form method="POST" action="{{ url_for('create_story') }}">
+
+                    <div class="form-group">
+                        <label for="title">Story Title</label>
+                        <input
+                            type="text"
+                            id="title"
+                            name="title"
+                            placeholder="Enter story title"
+                            maxlength="200"
+                            autocomplete="off"
+                            required
+                            value="{{ request.form.get('title', '') }}"
+                        >
+                    </div>
+
+                    {% set selected_category = request.form.get('category', 'General') %}
+
+                    <div class="form-group">
+                        <label for="category">Category</label>
+                        <select id="category" name="category">
+                            <option value="General" {% if selected_category == 'General' %}selected{% endif %}>General</option>
+                            <option value="Confession" {% if selected_category == 'Confession' %}selected{% endif %}>Confession</option>
+                            <option value="Experience" {% if selected_category == 'Experience' %}selected{% endif %}>Experience</option>
+                            <option value="News" {% if selected_category == 'News' %}selected{% endif %}>News</option>
+                            <option value="Relationship" {% if selected_category == 'Relationship' %}selected{% endif %}>Relationship</option>
+                            <option value="Marriage" {% if selected_category == 'Marriage' %}selected{% endif %}>Marriage</option>
+                            <option value="Life" {% if selected_category == 'Life' %}selected{% endif %}>Life</option>
+                            <option value="Novels" {% if selected_category == 'Novels' %}selected{% endif %}>Novels</option>
+                            <option value="18+" {% if selected_category == '18+' %}selected{% endif %}>18+</option>
+                            <option value="Other" {% if selected_category == 'Other' %}selected{% endif %}>Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="author">Author</label>
+                        <input
+                            type="text"
+                            id="author"
+                            name="author"
+                            placeholder="Anonymous"
+                            maxlength="100"
+                            autocomplete="name"
+                            value="{{ request.form.get('author', 'Anonymous') }}"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="content">Story Content</label>
+                        <textarea
+                            id="content"
+                            name="content"
+                            placeholder="Write your story here..."
+                            required
+                        >{{ request.form.get('content', '') }}</textarea>
+                    </div>
+
+                    <button type="submit" class="create-button">
+                        Publish Story
+                    </button>
+
+                </form>
+
+            </section>
+
+        </main>
+
+    </div>
+
+</body>
+
+</html>

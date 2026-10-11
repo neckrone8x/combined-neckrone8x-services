@@ -1,0 +1,47 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8001:8001"
+    environment:
+      - NECKRONE_PG_DSN=postgresql+psycopg2://neckrone:neckrone@postgres:5432/neckrone
+      - NECKRONE_QDRANT_HOST=qdrant
+      - NECKRONE_QDRANT_PORT=6333
+      - OLLAMA_HOST=http://ollama:11434
+      - HF_HOME=/models/hf
+    volumes:
+      - hf_cache:/models/hf
+      - ./data:/app/data
+    depends_on:
+      - qdrant
+      - postgres
+      - ollama
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    restart: unless-stopped
+    volumes:
+      - qdrant_data:/qdrant/storage
+
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: neckrone
+      POSTGRES_PASSWORD: neckrone
+      POSTGRES_DB: neckrone
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  ollama:
+    image: ollama/ollama:latest
+    restart: unless-stopped
+    volumes:
+      - ollama_data:/root/.ollama
+
+volumes:
+  qdrant_data:
+  pg_data:
+  ollama_data:
+  hf_cache:

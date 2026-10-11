@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta name="robots" content="noindex">
+
+    <title>Admin Login | Neckrone8x</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/admin.css') }}"
+    >
+</head>
+
+<body class="admin-login-page">
+
+    <div class="login-box">
+
+        <div class="login-logo">
+            <h1>
+                Neckrone<span>8X</span>
+            </h1>
+            <p>Stories Administration</p>
+        </div>
+
+        {% if error %}
+            <div class="login-error">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('login') }}">
+
+            <div class="login-form-group">
+                <label for="username">Username</label>
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    autocomplete="username"
+                    maxlength="100"
+                    required
+                    autofocus
+                >
+            </div>
+
+            <div class="login-form-group">
+                <label for="password">Password</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    autocomplete="current-password"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="login-submit">
+                Login
+            </button>
+
+        </form>
+
+        <a href="{{ url_for('stories') }}" class="login-back">
+            ← Back to Stories
+        </a>
+
+    </div>
+
+</body>
+
+</html>

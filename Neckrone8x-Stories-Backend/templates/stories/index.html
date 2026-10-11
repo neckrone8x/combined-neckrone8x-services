@@ -1,0 +1,415 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Neckrone8x Stories</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/stories.css') }}"
+    >
+
+</head>
+
+<body>
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header class="stories-header">
+
+        <div class="header-inner">
+
+            <!-- MAIN WEBSITE -->
+
+            <a
+                href="{{ url_for('home') }}"
+                class="logo"
+            >
+                NECKRONE8X
+            </a>
+
+
+            <!-- STORIES -->
+
+            <a
+                href="{{ url_for('stories') }}"
+                class="back-link"
+            >
+                ← Stories
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main class="stories-container">
+
+
+        <!-- =================================================
+             PAGE HEADER
+        ================================================== -->
+
+        <section class="stories-intro">
+
+            <h1>
+                Neckrone8x Stories
+            </h1>
+
+            <p>
+                Real stories, confessions, experiences and news
+                shared with the Neckrone8x community.
+            </p>
+
+
+            <a
+                href="{{ url_for('submit_story') }}"
+                class="submit-story"
+            >
+                ✍️ Share Your Story
+            </a>
+
+        </section>
+
+
+        <!-- =================================================
+             SEARCH
+        ================================================== -->
+
+        <section class="story-search">
+
+            <form
+                method="GET"
+                action="{{ url_for('stories') }}"
+            >
+
+                <input
+                    type="text"
+                    name="search"
+                    value="{{ search }}"
+                    placeholder="Search stories..."
+                >
+
+                {% if category %}
+
+                    <input
+                        type="hidden"
+                        name="category"
+                        value="{{ category }}"
+                    >
+
+                {% endif %}
+
+
+                <button type="submit">
+                    🔍 Search
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- =================================================
+             CATEGORIES
+        ================================================== -->
+
+        <nav class="story-categories">
+
+            <!-- ALL -->
+
+            <a
+                href="{{ url_for('stories') }}"
+                class="{% if not category %}active{% endif %}"
+            >
+                All
+            </a>
+
+
+            <!-- CATEGORIES -->
+
+            {% for item in categories %}
+
+                <a
+                    href="{{ url_for('stories', category=item) }}"
+                    class="{% if category == item %}active{% endif %}"
+                >
+                    {{ item }}
+                </a>
+
+            {% endfor %}
+
+        </nav>
+
+
+        <!-- =================================================
+             LATEST STORIES
+        ================================================== -->
+
+        <section class="latest-stories">
+
+            <div class="section-heading">
+
+                <h2>
+                    Latest Stories
+                </h2>
+
+                <span>
+                    {{ pagination.total }} stories
+                </span>
+
+            </div>
+
+
+            <!-- =================================================
+                 STORY LIST
+            ================================================== -->
+
+            {% if stories %}
+
+                <div class="stories-grid">
+
+                    {% for story in stories %}
+
+                        <article class="story-card">
+
+
+                            <!-- ---------------------------------
+                                 CATEGORY
+                            ---------------------------------- -->
+
+                            <div class="story-card-category">
+
+                                {% if story.category == "18+" %}
+
+                                    🔞 18+
+
+                                {% else %}
+
+                                    {{ story.category }}
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- ---------------------------------
+                                 TITLE
+                            ---------------------------------- -->
+
+                            <h2>
+
+                                <a
+                                    href="{{ url_for('view_story', slug=story.slug) }}"
+                                >
+                                    {{ story.title }}
+                                </a>
+
+                            </h2>
+
+
+                            <!-- ---------------------------------
+                                 PREVIEW
+                            ---------------------------------- -->
+
+                            <p class="story-preview">
+
+                                {{ story.content[:180] }}
+
+                                {% if story.content|length > 180 %}
+                                    ...
+                                {% endif %}
+
+                            </p>
+
+
+                            <!-- ---------------------------------
+                                 META
+                            ---------------------------------- -->
+
+                            <div class="story-meta">
+
+                                <span>
+                                    {{ story.author }}
+                                </span>
+
+                                <span>
+                                    👁 {{ story.read_count or 0 }}
+                                </span>
+
+                            </div>
+
+
+                            <!-- ---------------------------------
+                                 READ STORY
+                            ---------------------------------- -->
+
+                            <a
+                                href="{{ url_for('view_story', slug=story.slug) }}"
+                                class="read-story"
+                            >
+                                READ STORY →
+                            </a>
+
+
+                        </article>
+
+                    {% endfor %}
+
+                </div>
+
+
+            {% else %}
+
+                <div class="no-stories">
+
+                    <h2>
+                        No stories found
+                    </h2>
+
+                    <p>
+                        Try a different search or category.
+                    </p>
+
+                    <a
+                        href="{{ url_for('stories') }}"
+                    >
+                        View All Stories
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- =================================================
+             PAGINATION
+        ================================================== -->
+
+        {% if pagination.pages > 1 %}
+
+            <nav
+                class="pagination"
+                aria-label="Stories pagination"
+            >
+
+
+                <!-- PREVIOUS -->
+
+                {% if pagination.has_prev %}
+
+                    <a
+                        href="{{ url_for(
+                            'stories',
+                            page=pagination.prev_num,
+                            search=search,
+                            category=category
+                        ) }}"
+                    >
+                        ← Previous
+                    </a>
+
+                {% endif %}
+
+
+                <!-- PAGE NUMBERS -->
+
+                {% for page_number in pagination.iter_pages(
+                    left_edge=1,
+                    left_current=1,
+                    right_current=1,
+                    right_edge=1
+                ) %}
+
+
+                    {% if page_number %}
+
+                        {% if page_number == pagination.page %}
+
+                            <span class="current-page">
+                                {{ page_number }}
+                            </span>
+
+                        {% else %}
+
+                            <a
+                                href="{{ url_for(
+                                    'stories',
+                                    page=page_number,
+                                    search=search,
+                                    category=category
+                                ) }}"
+                            >
+                                {{ page_number }}
+                            </a>
+
+                        {% endif %}
+
+
+                    {% else %}
+
+                        <span class="pagination-dots">
+                            …
+                        </span>
+
+                    {% endif %}
+
+                {% endfor %}
+
+
+                <!-- NEXT -->
+
+                {% if pagination.has_next %}
+
+                    <a
+                        href="{{ url_for(
+                            'stories',
+                            page=pagination.next_num,
+                            search=search,
+                            category=category
+                        ) }}"
+                    >
+                        Next →
+                    </a>
+
+                {% endif %}
+
+            </nav>
+
+        {% endif %}
+
+
+    </main>
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer>
+
+        © {{ now.year if now is defined else 2026 }}
+        Neckrone8x. All rights reserved.
+
+    </footer>
+
+
+</body>
+
+</html>

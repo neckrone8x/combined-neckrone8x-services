@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: mkuu
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NECKRONE_LOAD_LOCAL_MODELS
+        value: "false"
+      - key: QDRANT_URL
+        sync: false
+      - key: QDRANT_API_KEY
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: NECKRONE_USE_LOCAL_DB
+        value: "false"

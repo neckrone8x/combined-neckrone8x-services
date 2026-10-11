@@ -1,0 +1,381 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta name="robots" content="noindex">
+
+    <title>Dashboard | Neckrone8x Stories</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/admin.css') }}"
+    >
+</head>
+
+<body>
+
+    <div class="admin-shell">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+
+            <div class="sidebar-logo">
+                NECKRONE8X
+                <span>STORIES</span>
+            </div>
+
+            <div class="sidebar-title">
+                Administration
+            </div>
+
+            <nav class="sidebar-menu">
+                <a href="{{ url_for('dashboard') }}" class="active">
+                    Dashboard
+                </a>
+                <a href="{{ url_for('stories') }}">
+                    Stories
+                </a>
+                <a href="{{ url_for('manage_stories') }}">
+                    Manage Stories
+                </a>
+                <a href="{{ url_for('create_story') }}">
+                    Create Story
+                </a>
+                <a href="{{ url_for('manage_submissions') }}">
+                    Submissions
+                </a>
+                <a href="{{ url_for('admin_analytics') }}">
+                    Analytics
+                </a>
+            </nav>
+
+            <a href="{{ url_for('logout') }}" class="sidebar-logout">
+                Logout
+            </a>
+
+        </aside>
+
+
+        <!-- MAIN -->
+        <main class="main">
+
+            <!-- TOPBAR -->
+            <div class="topbar">
+                <div>
+                    <h1>Dashboard</h1>
+                    <p>Manage your Neckrone8x Stories.</p>
+                </div>
+
+                <a href="{{ url_for('create_story') }}" class="create-button">
+                    + Create Story
+                </a>
+            </div>
+
+
+            <!-- STATS -->
+            <section class="stats">
+
+                <div class="stat">
+                    <div class="stat-label">Published Stories</div>
+                    <div class="stat-value">{{ published_count }}</div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-label">Pending Submissions</div>
+                    <div class="stat-value">{{ pending_count }}</div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-label">Total Reads</div>
+                    <div class="stat-value">{{ total_reads }}</div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-label">Stories This Month</div>
+                    <div class="stat-value">{{ stories_this_month }}</div>
+                </div>
+
+            </section>
+
+
+            <!-- PENDING SUBMISSIONS -->
+            <section class="section">
+
+                <div class="section-header">
+                    <div>
+                        <h2>Pending Submissions</h2>
+                        <p>Stories waiting for your review.</p>
+                    </div>
+
+                    {% if pending_count > 0 %}
+                        <span class="pending-badge">
+                            {{ pending_count }} pending
+                        </span>
+                    {% endif %}
+                </div>
+
+                {% if pending_stories %}
+
+                    {% for story in pending_stories %}
+
+                        <div class="pending-story">
+                            <div class="pending-info">
+                                <div class="story-title">
+                                    {{ story.title }}
+                                </div>
+                                <div class="story-meta">
+                                    {{ story.category }} ·
+                                    {{ story.author }} ·
+                                    {{ story.created_at.strftime('%B %d, %Y') }}
+                                </div>
+                            </div>
+
+                            <a
+                                href="{{ url_for('review_story', story_id=story.id) }}"
+                                class="review-button"
+                            >
+                                Review →
+                            </a>
+                        </div>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <div class="empty">
+                        No pending submissions.
+                    </div>
+
+                {% endif %}
+
+            </section>
+
+
+            <!-- RECENT STORIES -->
+            <section class="section">
+
+                <div class="section-header">
+                    <h2>Recent Stories</h2>
+
+                    <a href="{{ url_for('stories') }}" class="view-all">
+                        View Public Stories →
+                    </a>
+                </div>
+
+                {% if recent_stories %}
+
+                    {% for story in recent_stories %}
+
+                        <div class="story">
+                            <div>
+                                <div class="story-title">
+                                    {{ story.title }}
+                                </div>
+                                <div class="story-meta">
+                                    {{ story.category }} ·
+                                    {{ story.read_count }} reads ·
+                                    {{ story.created_at.strftime('%B %d, %Y') }}
+                                </div>
+                            </div>
+
+                            <div class="story-actions">
+                                {% if story.published %}
+                                    <span class="status published">Published</span>
+                                    <a
+                                        href="{{ url_for('view_story', slug=story.slug) }}"
+                                        class="open-story"
+                                    >
+                                        Open →
+                                    </a>
+                                {% else %}
+                                    <span class="status draft">Pending</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <div class="empty">
+                        No stories yet.<br>
+                        Create your first story to see it here.
+                    </div>
+
+                {% endif %}
+
+            </section>
+
+
+            <!-- TOP STORIES -->
+            <section class="dashboard-section">
+
+                <div class="section-header">
+                    <div>
+                        <h2>Top Stories</h2>
+                        <p>Your most-read published stories.</p>
+                    </div>
+
+                    <a href="{{ url_for('manage_stories') }}" class="section-link">
+                        View All →
+                    </a>
+                </div>
+
+                {% if top_stories %}
+
+                    <div class="top-stories">
+
+                        {% for story in top_stories %}
+
+                            <div class="top-story">
+
+                                <div class="top-story-info">
+                                    <div class="top-story-title">
+                                        {{ story.title }}
+                                    </div>
+
+                                    <div class="top-story-meta">
+                                        {{ story.category }} · {{ story.author }}
+                                    </div>
+
+                                    <div class="read-progress">
+                                        <div
+                                            class="read-progress-bar"
+                                            style="width: {% if top_stories[0].read_count > 0 %}{{ (story.read_count / top_stories[0].read_count) * 100 }}%{% else %}0%{% endif %};"
+                                        ></div>
+                                    </div>
+                                </div>
+
+                                <div class="top-story-reads">
+                                    <strong>{{ story.read_count }}</strong>
+                                    <span>reads</span>
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="empty-state">
+                        No published stories yet.
+                    </div>
+
+                {% endif %}
+
+            </section>
+
+
+            <!-- STORY PERFORMANCE -->
+            <section class="section performance-section">
+
+                <div class="section-header">
+                    <div>
+                        <h2>Story Performance</h2>
+                        <p>Your most-read published stories.</p>
+                    </div>
+                </div>
+
+                {% if top_stories %}
+
+                    <div class="performance-list">
+
+                        {% for story in top_stories %}
+
+                            <div class="performance-item">
+
+                                <div class="performance-info">
+                                    <strong>{{ story.title }}</strong>
+                                    <span>{{ story.category }}</span>
+                                </div>
+
+                                <div class="performance-reads">
+                                    <span class="eye-icon" aria-hidden="true">👁</span>
+                                    <span>{{ story.read_count }}</span>
+
+                                    <a
+                                        href="{{ url_for('story_analytics', story_id=story.id) }}"
+                                        class="analytics-link"
+                                    >
+                                        Analytics
+                                    </a>
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="empty-performance">
+                        No published stories yet.
+                    </div>
+
+                {% endif %}
+
+            </section>
+
+
+            <!-- QUICK ACTIONS -->
+            <section class="section">
+
+                <div class="section-header">
+                    <h2>Quick Actions</h2>
+                </div>
+
+                <div class="quick-action">
+                    <div>
+                        <div class="story-title">Create a Story</div>
+                        <div class="story-meta">
+                            Write and publish a new story.
+                        </div>
+                    </div>
+                    <a href="{{ url_for('create_story') }}" class="view-all">
+                        Create →
+                    </a>
+                </div>
+
+                <div class="quick-action">
+                    <div>
+                        <div class="story-title">View Stories</div>
+                        <div class="story-meta">
+                            See the stories currently visible to your audience.
+                        </div>
+                    </div>
+                    <a href="{{ url_for('stories') }}" class="view-all">
+                        View →
+                    </a>
+                </div>
+
+                <div class="quick-action">
+                    <div>
+                        <div class="story-title">Story Analytics</div>
+                        <div class="story-meta">
+                            Track reads and story performance.
+                        </div>
+                    </div>
+                    <a href="{{ url_for('admin_analytics') }}" class="view-all">
+                        Analytics →
+                    </a>
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+</body>
+
+</html>

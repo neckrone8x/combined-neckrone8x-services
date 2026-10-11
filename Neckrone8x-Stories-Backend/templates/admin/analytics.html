@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+
+    <title>{{ story.title }} Analytics | Neckrone8x</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/admin.css') }}"
+    >
+</head>
+
+<body>
+
+    <div class="admin-shell">
+
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                NECKRONE8X
+                <span>STORIES</span>
+            </div>
+            <div class="sidebar-title">Administration</div>
+            <nav class="sidebar-menu">
+                <a href="{{ url_for('dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('stories') }}">Stories</a>
+                <a href="{{ url_for('manage_stories') }}" class="active">Manage Stories</a>
+                <a href="{{ url_for('create_story') }}">Create Story</a>
+                <a href="{{ url_for('manage_submissions') }}">Submissions</a>
+                <a href="{{ url_for('admin_analytics') }}">Analytics</a>
+            </nav>
+            <a href="{{ url_for('logout') }}" class="sidebar-logout">Logout</a>
+        </aside>
+
+        <main class="main">
+
+            <div class="topbar">
+                <div>
+                    <h1>{{ story.title }}</h1>
+                    <p>
+                        Story Analytics ·
+                        {{ story.category }}
+                    </p>
+                </div>
+                <a href="{{ url_for('story_reads', story_id=story.id) }}" class="create-button">
+                    All Reads →
+                </a>
+            </div>
+
+
+            <section class="stats">
+
+                <div class="stat">
+                    <div class="stat-label">Total Reads</div>
+                    <div class="stat-value">{{ total_reads }}</div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-label">Unique Readers</div>
+                    <div class="stat-value">{{ unique_readers }}</div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-label">Reads per Reader</div>
+                    <div class="stat-value">{{ reads_per_reader }}</div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-label">Today</div>
+                    <div class="stat-value">{{ today_reads }}</div>
+                </div>
+
+            </section>
+
+
+            <section class="period-grid">
+
+                <div class="period">
+                    <div class="period-label">This Week</div>
+                    <div class="period-value">{{ week_reads }}</div>
+                </div>
+
+                <div class="period">
+                    <div class="period-label">This Month</div>
+                    <div class="period-value">{{ month_reads }}</div>
+                </div>
+
+                <div class="period">
+                    <div class="period-label">Avg. Daily Reads</div>
+                    <div class="period-value">{{ average_daily_reads }}</div>
+                </div>
+
+            </section>
+
+
+            <section class="section">
+
+                <div class="section-header">
+                    <div>
+                        <h2>Read History</h2>
+                        <p>Reads over the last 7 days.</p>
+                    </div>
+                </div>
+
+                {% if daily_reads %}
+
+                    <div class="chart">
+
+                        {% for day in daily_reads %}
+                            <div class="chart-day">
+                                <div class="chart-value">{{ day.reads }}</div>
+                                <div class="chart-bar-wrap">
+                                    {% if max_daily_reads > 0 %}
+                                        <div
+                                            class="chart-bar"
+                                            style="height: {{ (day.reads / max_daily_reads * 100) | round(1) }}%;"
+                                        ></div>
+                                    {% else %}
+                                        <div class="chart-bar" style="height: 3px;"></div>
+                                    {% endif %}
+                                </div>
+                                <div class="chart-label">{{ day.date }}</div>
+                            </div>
+                        {% endfor %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="empty-state">No read history available yet.</div>
+
+                {% endif %}
+
+            </section>
+
+
+            <section class="section">
+
+                <div class="section-header">
+                    <div>
+                        <h2>Recent Reads</h2>
+                        <p>
+                            {{ total_reads }} total reads ·
+                            {{ unique_readers }} unique reader{% if unique_readers != 1 %}s{% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                {% if recent_reads %}
+
+                    <div class="reads-list">
+
+                        {% for read in recent_reads %}
+                            <div class="read-row">
+                                <div class="read-row-icon">👁</div>
+
+                                <div class="read-row-info">
+                                    <div class="read-row-date">{{ read.relative_time }}</div>
+                                    <div class="read-row-time">
+                                        {{ read.read_at.strftime('%I:%M %p') }} · Story viewed
+                                    </div>
+                                </div>
+
+                                <div class="read-row-ip">
+                                    {% if read.ip_address %}{{ read.ip_address }}{% else %}Unknown{% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                    </div>
+
+                    {% if total_reads > 10 %}
+                        <div class="pagination">
+                            <span class="pagination-info">
+                                Showing {{ recent_reads|length }} most recent
+                            </span>
+                            <a href="{{ url_for('story_reads', story_id=story.id) }}">
+                                View All →
+                            </a>
+                        </div>
+                    {% endif %}
+
+                {% else %}
+
+                    <div class="empty-state">No reads recorded yet.</div>
+
+                {% endif %}
+
+            </section>
+
+        </main>
+
+    </div>
+
+</body>
+
+</html>

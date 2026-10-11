@@ -1,0 +1,98 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+
+    <title>Review Story | Neckrone8x</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/admin.css') }}"
+    >
+</head>
+
+<body>
+
+    <div class="admin-shell">
+
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                NECKRONE8X
+                <span>STORIES</span>
+            </div>
+            <div class="sidebar-title">Administration</div>
+            <nav class="sidebar-menu">
+                <a href="{{ url_for('dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('stories') }}">Stories</a>
+                <a href="{{ url_for('manage_stories') }}">Manage Stories</a>
+                <a href="{{ url_for('create_story') }}">Create Story</a>
+                <a href="{{ url_for('manage_submissions') }}" class="active">Submissions</a>
+                <a href="{{ url_for('admin_analytics') }}">Analytics</a>
+            </nav>
+            <a href="{{ url_for('logout') }}" class="sidebar-logout">Logout</a>
+        </aside>
+
+        <main class="main">
+
+            <div class="topbar">
+                <div>
+                    <h1>Review Story</h1>
+                    <p>Review this submission before publishing it.</p>
+                </div>
+                <a href="{{ url_for('manage_submissions') }}" class="create-button">
+                    ← Back to Submissions
+                </a>
+            </div>
+
+            <section class="section">
+
+                <div class="section-header">
+                    <div>
+                        <h2>{{ story.title }}</h2>
+                        <p>
+                            {{ story.category }} ·
+                            {{ story.author }} ·
+                            {{ story.created_at.strftime("%B %d, %Y") }}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="story-preview-content">
+                    {{ story.content }}
+                </div>
+
+                <div class="review-actions">
+
+                    <form
+                        method="POST"
+                        action="{{ url_for('approve_story', story_id=story.id) }}"
+                    >
+                        <button type="submit" class="btn-approve">
+                            ✓ Approve &amp; Publish
+                        </button>
+                    </form>
+
+                    <form
+                        method="POST"
+                        action="{{ url_for('delete_story', story_id=story.id) }}"
+                        onsubmit="return confirm('Delete this story permanently?');"
+                    >
+                        <button type="submit" class="btn-delete">
+                            Delete
+                        </button>
+                    </form>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+</body>
+
+</html>

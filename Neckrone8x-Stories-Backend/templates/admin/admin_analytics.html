@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+
+    <title>Analytics | Neckrone8x Stories</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/admin.css') }}"
+    >
+</head>
+
+<body>
+
+    <div class="admin-shell">
+
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                NECKRONE8X
+                <span>STORIES</span>
+            </div>
+            <div class="sidebar-title">Administration</div>
+            <nav class="sidebar-menu">
+                <a href="{{ url_for('dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('stories') }}">Stories</a>
+                <a href="{{ url_for('manage_stories') }}">Manage Stories</a>
+                <a href="{{ url_for('create_story') }}">Create Story</a>
+                <a href="{{ url_for('manage_submissions') }}">Submissions</a>
+                <a href="{{ url_for('admin_analytics') }}" class="active">Analytics</a>
+            </nav>
+            <a href="{{ url_for('logout') }}" class="sidebar-logout">Logout</a>
+        </aside>
+
+        <main class="main">
+
+            <div class="topbar">
+                <div>
+                    <h1>Stories Analytics</h1>
+                    <p>Overall performance of your published Neckrone8x Stories.</p>
+                </div>
+            </div>
+
+
+            <section class="stats">
+
+                <div class="stat">
+                    <div class="stat-label">Total Reads</div>
+                    <div class="stat-value">{{ total_reads }}</div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-label">Published Stories</div>
+                    <div class="stat-value">{{ total_stories }}</div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-label">Unique Readers</div>
+                    <div class="stat-value">{{ unique_readers }}</div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-label">Reads per Reader</div>
+                    <div class="stat-value">{{ reads_per_reader }}</div>
+                </div>
+
+            </section>
+
+
+            <section class="period-grid">
+
+                <div class="period">
+                    <div class="period-label">Today</div>
+                    <div class="period-value">{{ today_reads }}</div>
+                </div>
+
+                <div class="period">
+                    <div class="period-label">This Week</div>
+                    <div class="period-value">{{ week_reads }}</div>
+                </div>
+
+                <div class="period">
+                    <div class="period-label">This Month</div>
+                    <div class="period-value">{{ month_reads }}</div>
+                </div>
+
+            </section>
+
+
+            <section class="section">
+
+                <div class="section-header">
+                    <div>
+                        <h2>Top Stories</h2>
+                        <p>Your most-read published stories.</p>
+                    </div>
+                </div>
+
+                {% if top_stories %}
+
+                    {% for story in top_stories %}
+
+                        <div class="story">
+
+                            <div>
+                                <div class="story-title">{{ story.title }}</div>
+                                <div class="story-meta">
+                                    {{ story.category }} ·
+                                    {{ story.author }} ·
+                                    {{ story.read_count }} reads
+                                </div>
+                            </div>
+
+                            <div class="story-actions">
+                                <a
+                                    href="{{ url_for('story_analytics', story_id=story.id) }}"
+                                    class="open-story"
+                                >
+                                    Detailed Analytics →
+                                </a>
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <div class="empty-state">No published stories yet.</div>
+
+                {% endif %}
+
+            </section>
+
+        </main>
+
+    </div>
+
+</body>
+
+</html>

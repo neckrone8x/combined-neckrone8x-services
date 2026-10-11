@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="{{ story.title }} | Neckrone8x Stories"
+    >
+
+    <!-- OPEN GRAPH -->
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="{{ story.title }}">
+    <meta property="og:description" content="{{ story.content[:160] }}">
+    <meta property="og:url" content="{{ request.url }}">
+
+    {% if story.cover_image %}
+        <meta
+            property="og:image"
+            content="{{ request.url_root.rstrip('/') }}{{ story.cover_image }}"
+        >
+    {% endif %}
+
+    <!-- TWITTER -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ story.title }}">
+    <meta name="twitter:description" content="{{ story.content[:160] }}">
+
+    {% if story.cover_image %}
+        <meta
+            name="twitter:image"
+            content="{{ request.url_root.rstrip('/') }}{{ story.cover_image }}"
+        >
+    {% endif %}
+
+    <title>{{ story.title }} | Neckrone8x Stories</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/stories.css') }}"
+    >
+</head>
+
+<body>
+
+    <!-- READING PROGRESS -->
+    <div class="reading-progress">
+        <div class="reading-progress-bar" id="progressBar"></div>
+    </div>
+
+
+    <!-- HEADER -->
+    <header class="stories-header">
+        <div class="header-inner">
+            <a href="{{ url_for('stories') }}" class="logo">
+                NECKRONE8X
+            </a>
+            <a href="{{ url_for('stories') }}" class="back-link">
+                ← All Stories
+            </a>
+        </div>
+    </header>
+
+
+    <!-- STORY -->
+    <main id="story">
+        <article class="story-page">
+
+            <span class="category">
+                {{ story.category }}
+            </span>
+
+            <h1 class="story-page-title">
+                {{ story.title }}
+            </h1>
+
+            <div class="story-page-meta">
+                <span>By {{ story.author }}</span>
+                <span class="meta-separator">•</span>
+                <span>{{ story.created_at.strftime('%B %d, %Y') }}</span>
+                <span class="meta-separator">•</span>
+                <span>👁 {{ story.read_count }} reads</span>
+            </div>
+
+            {% if story.cover_image %}
+                <img
+                    src="{{ story.cover_image }}"
+                    alt="{{ story.title }}"
+                    class="story-page-cover"
+                >
+            {% endif %}
+
+            <div class="story-page-content">
+                {{ story.content }}
+            </div>
+
+            <!-- REACTIONS -->
+<section class="story-reactions" id="reactions">
+    <h3>How did this story make you feel?</h3>
+    <div class="reaction-buttons">
+        {% set emoji_map = {'love': '❤️', 'like': '👍', 'laugh': '😂', 'wow': '😮', 'sad': '😢'} %}
+        {% set label_map = {'love': 'Love', 'like': 'Like', 'laugh': 'Laugh', 'wow': 'Wow', 'sad': 'Sad'} %}
+
+        {% for rtype in ['love', 'like', 'laugh', 'wow', 'sad'] %}
+            <form method="POST" action="{{ url_for('react_to_story', slug=story.slug, reaction_type=rtype) }}" class="reaction-form">
+                <button type="submit" class="reaction-btn {% if user_reaction_type == rtype %}active{% endif %}" aria-label="React with {{ label_map[rtype] }}">
+                    <span class="reaction-emoji">{{ emoji_map[rtype] }}</span>
+                    <span class="reaction-label">{{ label_map[rtype] }}</span>
+                    {% if reaction_counts[rtype] > 0 %}
+                        <span class="reaction-count">{{ reaction_counts[rtype] }}</span>
+                    {% endif %}
+                </button>
+            </form>
+        {% endfor %}
+    </div>
+</section>
+
+            <!-- SHARE -->
+            <section class="story-share">
+                <h3>Share this story</h3>
+
+                <div class="share-buttons">
+                    <a
+                        href="https://wa.me/?text={{ ('Read this story on Neckrone8x: ' ~ story.title ~ ' ' ~ request.url)|urlencode }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="share-button whatsapp"
+                    >
+                        WhatsApp
+                    </a>
+
+                    <a
+                        href="https://www.facebook.com/sharer/sharer.php?u={{ request.url|urlencode }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="share-button facebook"
+                    >
+                        Facebook
+                    </a>
+
+                    <a
+                        href="https://twitter.com/intent/tweet?text={{ ('Read this story on Neckrone8x: ' ~ story.title)|urlencode }}&url={{ request.url|urlencode }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="share-button x"
+                    >
+                        𝕏 Share
+                    </a>
+
+                    <button
+                        type="button"
+                        class="share-button copy"
+                        onclick="copyStoryLink()"
+                    >
+                        🔗 Copy Link
+                    </button>
+                </div>
+
+                <div id="copyMessage" class="copy-message">
+                    ✓ Story link copied!
+                </div>
+            </section>
+
+            <!-- COMMENTS -->
+<section class="story-comments" id="comments">
+    <h3>💬 Comments <span class="comment-count">({{ comments|length }})</span></h3>
+
+    <form class="comment-form" method="POST" action="{{ url_for('add_comment', slug=story.slug) }}">
+        <input type="text" name="name" placeholder="Your name (or leave blank for Anonymous)" maxlength="80" autocomplete="name">
+        <textarea name="content" placeholder="Share your thoughts on this story..." maxlength="2000" required></textarea>
+        <button type="submit">Post Comment</button>
+    </form>
+
+    {% if comments %}
+        <div class="comment-list">
+            {% for comment in comments %}
+                <div class="comment-item">
+                    <div class="comment-header">
+                        <div class="comment-avatar">{{ comment.name[0]|upper }}</div>
+                        <div class="comment-meta">
+                            <span class="comment-author">{{ comment.name }}</span>
+                            <span class="comment-time">{{ comment.created_at.strftime('%B %d, %Y') }}</span>
+                        </div>
+                    </div>
+                    <p class="comment-text">{{ comment.content }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="comment-empty">No comments yet. Be the first to share your thoughts.</div>
+    {% endif %}
+</section>
+
+            <!-- BOTTOM NAV -->
+            <div class="story-bottom-nav">
+                <a href="{{ url_for('stories') }}" class="story-bottom-link">
+                    ↑ All Stories
+                </a>
+            </div>
+
+        </article>
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer>
+        &copy; {{ current_year }} Neckrone8x. All rights reserved.
+    </footer>
+
+
+    <script>
+        /* =================================
+           COPY LINK
+        ================================= */
+        function copyStoryLink() {
+            const url = window.location.href;
+
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard
+                    .writeText(url)
+                    .then(showCopyMessage)
+                    .catch(() => fallbackCopy(url));
+            } else {
+                fallbackCopy(url);
+            }
+        }
+
+        function fallbackCopy(url) {
+            const textArea = document.createElement('textarea');
+            textArea.value = url;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-9999px';
+
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                document.execCommand('copy');
+                showCopyMessage();
+            } catch (error) {
+                alert('Unable to copy the link.');
+            }
+
+            document.body.removeChild(textArea);
+        }
+
+        function showCopyMessage() {
+            const message = document.getElementById('copyMessage');
+            if (!message) return;
+
+            message.style.display = 'block';
+
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 2500);
+        }
+
+
+        /* =================================
+           READING PROGRESS
+        ================================= */
+        function updateReadingProgress() {
+            const story = document.getElementById('story');
+            const progressBar = document.getElementById('progressBar');
+
+            if (!story || !progressBar) return;
+
+            const storyTop = story.offsetTop;
+            const storyHeight = story.offsetHeight;
+            const windowHeight = window.innerHeight;
+            const scrollPosition = window.scrollY;
+
+            const total = storyHeight - windowHeight;
+
+            if (total <= 0) {
+                progressBar.style.width = '100%';
+                return;
+            }
+
+            let progress = ((scrollPosition - storyTop) / total) * 100;
+            progress = Math.max(0, Math.min(100, progress));
+
+            progressBar.style.width = progress + '%';
+        }
+
+        window.addEventListener('scroll', updateReadingProgress, { passive: true });
+        window.addEventListener('resize', updateReadingProgress);
+        document.addEventListener('DOMContentLoaded', updateReadingProgress);
+    </script>
+
+</body>
+
+</html>

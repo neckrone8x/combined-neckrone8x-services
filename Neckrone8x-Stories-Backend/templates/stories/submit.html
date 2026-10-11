@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Share Your Story | Neckrone8x</title>
+
+    <meta
+        name="description"
+        content="Share your story with the Neckrone8x community."
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/stories.css') }}"
+    >
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="stories-header">
+        <div class="header-inner">
+            <a href="{{ url_for('stories') }}" class="logo">
+                NECKRONE8X
+            </a>
+            <a href="{{ url_for('stories') }}" class="back-link">
+                ← Back to Stories
+            </a>
+        </div>
+    </header>
+
+
+    <!-- SUBMIT -->
+    <main class="submit-page">
+
+        <div class="submit-header">
+            <h1>Share Your Story</h1>
+            <p>
+                Have a story, confession, experience, or
+                something important to share? Tell the
+                Neckrone8x community.
+            </p>
+        </div>
+
+        <form
+            class="submit-form"
+            method="POST"
+            action="{{ url_for('submit_story') }}"
+        >
+
+            {% if error %}
+                <div class="form-error">
+                    {{ error }}
+                </div>
+            {% endif %}
+
+
+            <!-- TITLE -->
+            <div class="form-group">
+                <label for="title">
+                    Story Title <span class="required">*</span>
+                </label>
+                <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    placeholder="Enter your story title"
+                    maxlength="200"
+                    autocomplete="off"
+                    required
+                    value="{{ request.form.get('title', '') }}"
+                >
+            </div>
+
+
+            <!-- CATEGORY -->
+            {% set selected_category = request.form.get('category', 'General') %}
+
+            <div class="form-group">
+                <label for="category">Category</label>
+                <select id="category" name="category">
+                    <option value="General" {% if selected_category == 'General' %}selected{% endif %}>General</option>
+                    <option value="Confession" {% if selected_category == 'Confession' %}selected{% endif %}>Confession</option>
+                    <option value="Experience" {% if selected_category == 'Experience' %}selected{% endif %}>Experience</option>
+                    <option value="News" {% if selected_category == 'News' %}selected{% endif %}>News</option>
+                    <option value="Relationship" {% if selected_category == 'Relationship' %}selected{% endif %}>Relationship</option>
+                    <option value="Marriage" {% if selected_category == 'Marriage' %}selected{% endif %}>Marriage</option>
+                    <option value="Life" {% if selected_category == 'Life' %}selected{% endif %}>Life</option>
+                    <option value="Novels" {% if selected_category == 'Novels' %}selected{% endif %}>Novels</option>
+                    <option value="18+" {% if selected_category == '18+' %}selected{% endif %}>18+</option>
+                    <option value="Other" {% if selected_category == 'Other' %}selected{% endif %}>Other</option>
+                </select>
+            </div>
+
+
+            <!-- AUTHOR -->
+            <div class="form-group">
+                <label for="author">Author</label>
+                <input
+                    type="text"
+                    id="author"
+                    name="author"
+                    placeholder="Your name or Anonymous"
+                    maxlength="100"
+                    autocomplete="name"
+                    value="{{ request.form.get('author', '') }}"
+                >
+                <div class="form-help">
+                    Leave this blank if you want your story
+                    to appear as Anonymous.
+                </div>
+            </div>
+
+
+            <!-- CONTENT -->
+            <div class="form-group">
+                <label for="content">
+                    Story Content <span class="required">*</span>
+                </label>
+                <textarea
+                    id="content"
+                    name="content"
+                    placeholder="Write your story here..."
+                    required
+                >{{ request.form.get('content', '') }}</textarea>
+                <div class="form-help">
+                    Please write your story clearly. You can
+                    use paragraphs and line breaks.
+                </div>
+            </div>
+
+
+            <!-- NOTICE -->
+            <div class="form-notice">
+                <strong>Important:</strong>
+                Your story will not be published immediately.
+                Every submission is reviewed before it becomes
+                visible to the public.
+            </div>
+
+
+            <!-- SUBMIT -->
+            <button type="submit" class="form-submit">
+                Submit Story
+            </button>
+
+        </form>
+
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer>
+        &copy; {{ current_year }} Neckrone8x. All rights reserved.
+    </footer>
+
+</body>
+
+</html>

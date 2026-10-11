@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>18+ Content — {{ story.title }} | Neckrone8x</title>
+
+    <meta name="robots" content="noindex">
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/stories.css') }}"
+    >
+</head>
+
+<body>
+
+    <div class="age-gate-page">
+
+        <div class="age-gate-box">
+
+            <div class="age-gate-icon">
+                🔞
+            </div>
+
+            <h1>18+ Content</h1>
+
+            <div class="age-gate-story-title">
+                {{ story.title }}
+            </div>
+
+            <p>
+                This story is intended for adults only.
+                By continuing, you confirm that you are
+                18 years of age or older and agree to view
+                mature content.
+            </p>
+
+            <div class="age-gate-actions">
+
+                <a
+                    href="{{ url_for('verify_age', slug=story.slug) }}"
+                    class="age-gate-btn confirm"
+                >
+                    I'm 18+ — Continue
+                </a>
+
+                <a
+                    href="{{ url_for('stories') }}"
+                    class="age-gate-btn exit"
+                >
+                    Go Back
+                </a>
+
+            </div>
+
+            <div class="age-gate-notice">
+                Neckrone8x Stories — 18+ section
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
