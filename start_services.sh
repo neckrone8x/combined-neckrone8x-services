@@ -12,7 +12,7 @@ python app.py &
 
 # Start the Mkuu AI app in the background
 cd /app/mkuu-ai
-python main.py & 
+python app/main.py &
 
 # Start the Stories Backend in the background
 cd /app/Neckrone8x-Stories-Backend
