@@ -21,7 +21,7 @@ RUN pip install -r requirements.txt
 # Install dependencies for Mkuu AI
 WORKDIR /app/mkuu-ai
 RUN pip install --upgrade pip
-RUN pip install .
+RUN pip install -e .
 RUN pip install fastapi uvicorn
 
 # Copy the Nginx and startup configurations we will create next
